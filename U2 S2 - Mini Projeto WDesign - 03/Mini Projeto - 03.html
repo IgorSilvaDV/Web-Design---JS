@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>Jogo da Bola</title>
+<style>
+  canvas {
+    border: 2px solid black;
+    display: block;
+    margin: 20px auto;
+    background-color: #f0f0f0;
+  }
+  h2 {
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<h2>Pontuação: <span id="score">0</span></h2>
+<canvas id="canvas" width="500" height="400"></canvas>
+
+<audio id="somAcerto" src="success-340660.mp3"></audio>
+
+
+<script>
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+const scoreEl = document.getElementById("score");
+const somAcerto = document.getElementById("somAcerto");
+
+let score = 0;
+const bola = {
+    x: Math.random() * (canvas.width - 40) + 20,
+    y: Math.random() * (canvas.height - 40) + 20,
+    raio: 20,
+    cor: "orange"
+};
+
+// Função para desenhar a bola
+function desenharBola() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.beginPath();
+    ctx.arc(bola.x, bola.y, bola.raio, 0, 2 * Math.PI);
+    ctx.fillStyle = bola.cor;
+    ctx.fill();
+}
+
+// Função para gerar nova posição aleatória
+function novaPosicao() {
+    bola.x = Math.random() * (canvas.width - 40) + 20;
+    bola.y = Math.random() * (canvas.height - 40) + 20;
+    // Bola muda de cor
+    const cores = ["orange", "red", "green", "blue", "purple"];
+    bola.cor = cores[Math.floor(Math.random() * cores.length)];
+}
+
+// Detectar clique no canvas
+canvas.addEventListener("click", function(event) {
+    const rect = canvas.getBoundingClientRect();
+    const mouseX = event.clientX - rect.left;
+    const mouseY = event.clientY - rect.top;
+
+    const distancia = Math.sqrt((mouseX - bola.x)**2 + (mouseY - bola.y)**2);
+    if (distancia < bola.raio) {
+        score++;
+        scoreEl.textContent = score;
+        // Tocar som
+        somAcerto.currentTime = 0; // volta para o começo do áudio
+        somAcerto.play();
+        novaPosicao();
+        desenharBola();
+    }
+});
+
+// Inicia o jogo
+desenharBola();
+</script>
+
+</body>
+</html>
